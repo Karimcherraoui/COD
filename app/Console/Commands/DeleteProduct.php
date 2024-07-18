@@ -2,41 +2,30 @@
 
 namespace App\Console\Commands;
 
+use App\Services\ProductService;
 use Illuminate\Console\Command;
 
 class DeleteProduct extends Command
 {
-    /**
-     * The name and signature of the console command.
-     *
-     * @var string
-     */
-    protected $signature = 'command:name';
+    protected $signature = 'product:delete {id}';
+    protected $description = 'Delete a product';
 
-    /**
-     * The console command description.
-     *
-     * @var string
-     */
-    protected $description = 'Command description';
+    protected $productService;
 
-    /**
-     * Create a new command instance.
-     *
-     * @return void
-     */
-    public function __construct()
+    public function __construct(ProductService $productService)
     {
         parent::__construct();
+        $this->productService = $productService;
     }
 
-    /**
-     * Execute the console command.
-     *
-     * @return int
-     */
     public function handle()
     {
-        return 0;
+        $id = $this->argument('id');
+
+        if ($this->productService->deleteProduct($id)) {
+            $this->info("Product with ID {$id} deleted successfully");
+        } else {
+            $this->error("Failed to delete product with ID {$id}");
+        }
     }
 }

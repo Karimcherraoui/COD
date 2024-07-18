@@ -2,41 +2,30 @@
 
 namespace App\Console\Commands;
 
+use App\Services\CategoryService;
 use Illuminate\Console\Command;
 
 class DeleteCategory extends Command
 {
-    /**
-     * The name and signature of the console command.
-     *
-     * @var string
-     */
-    protected $signature = 'command:name';
+    protected $signature = 'category:delete {id}';
+    protected $description = 'Delete a category';
 
-    /**
-     * The console command description.
-     *
-     * @var string
-     */
-    protected $description = 'Command description';
+    protected $categoryService;
 
-    /**
-     * Create a new command instance.
-     *
-     * @return void
-     */
-    public function __construct()
+    public function __construct(CategoryService $categoryService)
     {
         parent::__construct();
+        $this->categoryService = $categoryService;
     }
 
-    /**
-     * Execute the console command.
-     *
-     * @return int
-     */
     public function handle()
     {
-        return 0;
+        $id = $this->argument('id');
+
+        if ($this->categoryService->deleteCategory($id)) {
+            $this->info("Category with ID {$id} deleted successfully");
+        } else {
+            $this->error("Failed to delete category with ID {$id}");
+        }
     }
 }

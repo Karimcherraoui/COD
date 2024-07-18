@@ -19,6 +19,21 @@ class CategoryService
         return $this->categoryRepository->create($data);
     }
 
+    public function getCategories()
+    {
+        return $this->categoryRepository->all();
+    }
+
+    public function getCategory($id)
+    {
+        return $this->categoryRepository->find($id);
+    }
+
+    public function updateCategory(array $data, $id)
+    {
+        return $this->categoryRepository->update($data, $id);
+    }
+
     public function deleteCategory($id)
     {
         return $this->categoryRepository->delete($id);

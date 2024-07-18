@@ -11,6 +11,11 @@ class CategoryRepository implements CategoryRepositoryInterface
         return Category::all();
     }
 
+    public function findMany(array $ids)
+    {
+        return Category::whereIn('id', $ids)->get();
+    }
+
     public function create(array $data)
     {
         return Category::create($data);

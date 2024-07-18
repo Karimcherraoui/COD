@@ -1,39 +1,44 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Repositories;
 
-use App\Services\CategoryService;
-use Illuminate\Http\Request;
+use App\Models\Category;
 
-class CategoryController extends Controller
+class CategoryRepository implements CategoryRepositoryInterface
 {
-
-    protected $categoryService;
-
-    public function __construct(CategoryService $productService)
+    public function findMany(array $ids)
     {
-        $this->categoryService = $productService;
+        return Category::findMany($ids);
     }
 
-    public function index(Request $request)
+    public function all()
     {
-        $categories = $this->categoryService->getCategories($request->all());
-        return response()->json($categories);
-    }
-
-    public function store(Request $request)
-    {
-        $validatedData = $request->validate([
-            'name' => 'required|string|max:255',
-            'description' => 'required|string',
-            'price' => 'required|numeric|min:0',
-            'image' => 'nullable|image|max:2048',
-            'categories' => 'array',
-        ]);
-
-        $product = $this->productService->createProduct($validatedData);
-        return response()->json($product, 201);
+        return Category::all();
     }
 
 
+    public function create(array $data)
+    {
+        return Category::create($data);
+    }
+
+
+    public function update(array $data, $id)
+    {
+        $category = Category::findOrFail($id);
+        $category->update($data);
+        return $category;
+    }
+
+
+    public function delete($id)
+    {
+        return Category::destroy($id);
+    }
+
+
+    public function find($id)
+    {
+        return Category::findOrFail($id);
+    }
 }
