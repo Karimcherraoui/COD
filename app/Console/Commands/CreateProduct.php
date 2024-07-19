@@ -33,22 +33,9 @@ class CreateProduct extends Command
         ];
 
         if ($imagePath) {
-            if (file_exists($imagePath)) {
-                $fileName = basename($imagePath);
-                $storedPath = 'products/' . uniqid() . '_' . $fileName;
-                
-                if (copy($imagePath, storage_path('app/public/' . $storedPath))) {
-                    $data['image'] = $storedPath;
-                } else {
-                    $this->error("Failed to copy image file.");
-                    return;
-                }
-            } else {
-                $this->error("Image file not found: $imagePath");
-                return;
-            }
+            $data['image'] = $imagePath;
         }
-
+    
         $product = $this->productService->createProduct($data, $categories);
 
         $this->info("Product '{$product->name}' created successfully with ID: {$product->id}");

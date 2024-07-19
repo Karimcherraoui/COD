@@ -2,24 +2,32 @@
 
 namespace App\Services;
 
-use App\Repositories\CategoryRepositoryInterface;
 use App\Repositories\ProductRepositoryInterface;
+use App\Repositories\CategoryRepositoryInterface;
+use App\Services\ImageService;
 
 class ProductService
 {
     protected $productRepository;
     protected $categoryRepository;
+    protected $imageService;
 
     public function __construct(
         ProductRepositoryInterface $productRepository,
-        CategoryRepositoryInterface $categoryRepository
+        CategoryRepositoryInterface $categoryRepository,
+        ImageService $imageService
     ) {
         $this->productRepository = $productRepository;
         $this->categoryRepository = $categoryRepository;
+        $this->imageService = $imageService;
     }
 
     public function createProduct(array $data, array $categoryIds = [])
     {
+        if (isset($data['image'])) {
+            $data['image'] = $this->imageService->uploadImage($data['image']);
+        }
+
         $product = $this->productRepository->create($data);
 
         if (!empty($categoryIds)) {
@@ -29,6 +37,7 @@ class ProductService
 
         return $product;
     }
+
 
     public function getProducts()
     {
@@ -40,10 +49,12 @@ class ProductService
         return $this->productRepository->find($id);
     }
 
-    public function updateProduct(array $data, $id)
+    public function updateProduct($id, array $data)
     {
-        return $this->productRepository->update($data, $id);
+        return $this->productRepository->update($id, $data);
+
     }
+    
 
     public function deleteProduct($id)
     {

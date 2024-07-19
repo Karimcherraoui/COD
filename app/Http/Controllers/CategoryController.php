@@ -1,44 +1,56 @@
 <?php
 
-namespace App\Repositories;
+namespace App\Http\Controllers;
 
-use App\Models\Category;
+use App\Services\CategoryService;
+use Illuminate\Http\Request;
 
-class CategoryRepository implements CategoryRepositoryInterface
+class CategoryController extends Controller
 {
-    public function findMany(array $ids)
+    protected $categoryService;
+
+    public function __construct(CategoryService $categoryService)
     {
-        return Category::findMany($ids);
+        $this->categoryService = $categoryService;
     }
 
-    public function all()
+    public function index(Request $request)
     {
-        return Category::all();
+        $categories = $this->categoryService->getCategories($request->all());
+        return response()->json($categories);
     }
 
-
-    public function create(array $data)
+    public function store(Request $request)
     {
-        return Category::create($data);
+        $validatedData = $request->validate([
+            'name' => 'required|string|max:255',
+            'parent_id' => 'nullable|exists:categories,id',
+        ]);
+
+        $category = $this->categoryService->createCategory($validatedData);
+        return response()->json($category, 201);
     }
 
-
-    public function update(array $data, $id)
+    public function show($id)
     {
-        $category = Category::findOrFail($id);
-        $category->update($data);
-        return $category;
+        $category = $this->categoryService->getCategory($id);
+        return response()->json($category);
     }
 
-
-    public function delete($id)
+    public function update(Request $request, $id)
     {
-        return Category::destroy($id);
+        $validatedData = $request->validate([
+            'name' => 'required|string|max:255',
+            'parent_id' => 'nullable|exists:categories,id',
+        ]);
+
+        $category = $this->categoryService->updateCategory($id, $validatedData);
+        return response()->json($category);
     }
 
-
-    public function find($id)
+    public function destroy($id)
     {
-        return Category::findOrFail($id);
+        $this->categoryService->deleteCategory($id);
+        return response()->json(null, 204);
     }
 }

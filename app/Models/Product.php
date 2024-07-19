@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Storage;
 
 class Product extends Model
 {
@@ -31,6 +32,11 @@ class Product extends Model
         return $query->whereHas('categories', function ($q) use ($categoryId) {
             $q->where('categories.id', $categoryId);
         });
+    }
+
+    public function getImageUrlAttribute()
+    {
+        return $this->image_path ? url(Storage::url($this->image_path)) : null;
     }
 
    

@@ -22,6 +22,7 @@ class ProductRepository implements ProductRepositoryInterface
         $product->update($data);
         return $product;
     }
+    
 
     public function delete($id)
     {
